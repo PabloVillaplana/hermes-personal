@@ -1,0 +1,12 @@
+name: personal
+version: 0.1.0
+description: "Villa's own ventures and personal life: StampyCards, TRIBU-CR invoicing, workshop SaaS, Nucamas"
+hermes_requires: ">=0.12.0"
+author: "Juan Pablo Villaplana"
+license: "UNLICENSED"
+
+env_requires:
+  - name: COMPOSIO_API_KEY
+    description: "Composio Connect API key for the personal environment only (its own Composio user/account, with only the apps this profile needs)"
+    required: false
+    default: ""
