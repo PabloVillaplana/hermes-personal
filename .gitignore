@@ -58,3 +58,8 @@ cron/*
 skills/.*
 
 .DS_Store
+
+# Memory archive written by hermes-core/scripts/sync-memory.sh: keep everything under memory/
+# (the patterns above, e.g. sessions/ or cache/, would otherwise match inside it)
+!memory/
+!memory/**

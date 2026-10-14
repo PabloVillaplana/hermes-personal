@@ -12,6 +12,7 @@ This repo holds the agent's **rules, config and skills** — never credentials o
 | `distribution.yaml` | Distribution manifest | Bump `version` on changes |
 | `skills/core/` | Generated copy of the shared core skills | No |
 | `skills/<other>/` | Skills specific to this profile | Yes |
+| `memory/` | Archive of what the agent learned, written by `hermes-core/scripts/sync-memory.sh` | No — generated |
 
 ## Install / update
 
