@@ -1,6 +1,6 @@
 ---
 name: dev-task
-description: Implement a feature, fix or refactor in one of Villa's own repos (mainly pitmio) by delegating the coding to Claude Code — brief, read-only plan, Villa's approval, implementation, verification with the repo's checks, commit message. Use when Villa asks "hacé X en pitmio", "arreglá…", "agregá…" in his own projects.
+description: Implement a feature, fix or refactor in one of Villa's own repos (pitmio, todologos-back) by delegating the coding to Claude Code — brief, read-only plan, Villa's approval, implementation, verification with the repo's checks, commit message. Use when Villa asks "hacé X en pitmio", "arreglá…", "agregá…" in his own projects.
 version: 1.0.0
 platforms: [macos]
 metadata:
@@ -15,7 +15,7 @@ metadata:
 
 You (Hermes) own the task, the plan approval, the verification and the communication. **Claude Code** edits code inside one repo. Read the bundled `claude-code` skill for CLI details.
 
-- Repo (default): `/Users/pablovillaplana/Proyectos/pitmio`
+- Repos: `/Users/pablovillaplana/Proyectos/pitmio` (Sail) and `/Users/pablovillaplana/Proyectos/todologos-back` (local PHP / Docker). Ask which one if the request does not say.
 - Task workspace: `$HERMES_HOME/workspace/tasks/<slug>/` (never inside the repo)
 - `SKILL_DIR`: `~/.hermes/profiles/personal/skills/personal/dev-task` (holds `claude-rules.md`)
 - `CC_MODEL`: `opus` unless Villa names another model for this task; store it in `state.json`.
@@ -53,7 +53,7 @@ Save `session_id` to `tasks/<slug>/state.json`. **Show Villa the plan** (files, 
 ```bash
 claude -p "Villa approved the plan. Implement it now. Notes from Villa: <notes or 'none'>." \
   --resume "<session_id>" --permission-mode acceptEdits --model "$CC_MODEL" \
-  --allowedTools "Read,Edit,Write,Grep,Glob,mcp__laravel-boost__search-docs,mcp__laravel-boost__database-schema,mcp__laravel-boost__database-query,mcp__laravel-boost__browser-logs,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(./vendor/bin/sail composer lint:*),Bash(./vendor/bin/sail composer lint\:fix:*),Bash(./vendor/bin/sail composer types:*),Bash(./vendor/bin/sail composer test:*),Bash(./vendor/bin/sail artisan test:*),Bash(./vendor/bin/sail artisan make\:*),Bash(./vendor/bin/sail npm run test:*),Bash(./vendor/bin/sail npm run types\:check:*),Bash(./vendor/bin/sail npm run build:*),Bash(./vendor/bin/sail npx vp check:*),Bash(./vendor/bin/sail composer types\:generate:*)" \
+  --allowedTools "Read,Edit,Write,Grep,Glob,mcp__laravel-boost__search-docs,mcp__laravel-boost__database-schema,mcp__laravel-boost__database-query,mcp__laravel-boost__browser-logs,Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(./vendor/bin/sail composer lint:*),Bash(./vendor/bin/sail composer lint\:fix:*),Bash(./vendor/bin/sail composer types:*),Bash(./vendor/bin/sail composer test:*),Bash(./vendor/bin/sail artisan test:*),Bash(./vendor/bin/sail artisan make\:*),Bash(./vendor/bin/sail npm run test:*),Bash(./vendor/bin/sail npm run types\:check:*),Bash(./vendor/bin/sail npm run build:*),Bash(./vendor/bin/sail npx vp check:*),Bash(./vendor/bin/sail composer types\:generate:*),Bash(./vendor/bin/phpunit:*),Bash(./vendor/bin/pint:*),Bash(php -l:*),Bash(php artisan test:*),Bash(php artisan route\:list:*)" \
   --disallowedTools "Bash(git push:*),Bash(git commit:*),Bash(git reset:*),Bash(git checkout:*),Bash(git switch:*),Bash(rm:*),Bash(./vendor/bin/sail artisan migrate\:fresh:*),Bash(./vendor/bin/sail artisan db\:wipe:*),Bash(./vendor/bin/sail composer require:*),Bash(./vendor/bin/sail npm install:*),Bash(curl:*),Bash(wget:*),Bash(open:*),WebFetch" \
   --append-system-prompt-file "$SKILL_DIR/claude-rules.md" \
   --output-format json --max-turns 60 > "$T/implement.json"
@@ -69,10 +69,12 @@ git status && git diff --stat
 ./vendor/bin/sail npm run test && ./vendor/bin/sail npx vp check && ./vendor/bin/sail npm run types:check
 ```
 
+todologos-back instead: `./vendor/bin/pint --test && ./vendor/bin/phpunit` plus `php -l` on touched files; make sure `auth.json` and `.env.docker` are not in the diff.
+
 Also check: diff matches the plan; new UI strings exist in both `lang/es.json` and `lang/en.json`; `composer types:generate` was run if Data/enums changed; new workshop-private models use `BelongsToWorkshop` and have cross-workshop tests; no real data outside `database/seeders/Local/`; no secrets; no AI attribution. Fix through another `--resume` round if needed.
 
 ## 5. Hand off
 
-Reply in Spanish: what changed, checks run and results, the commit message(s) in Conventional Commits English (`feat(scope): …`), and anything Villa must do (migrations to run, `sail npm run build`, env vars). Commit only if he asks. **Never push or deploy.**
+Reply in Spanish: what changed, checks run and results, the commit message(s) in the repo's style (pitmio: Conventional Commits `feat(scope): …`; todologos-back: plain imperative sentence), and anything Villa must do (migrations to run, `sail npm run build`, env vars). Commit only if he asks. **Never push or deploy.**
 
 If the task produced a decision worth keeping, record it with the `project-memory` skill (pitmio keeps project knowledge in `CLAUDE.md` and `docs/`; ask before editing `CLAUDE.md`).

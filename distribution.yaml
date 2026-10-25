@@ -1,5 +1,5 @@
 name: personal
-version: 0.3.0
+version: 0.4.0
 description: "Villa's own ventures (Pitmio, StampyCards, TRIBU-CR invoicing, Nucamas) and personal life"
 hermes_requires: ">=0.12.0"
 author: "Juan Pablo Villaplana"
